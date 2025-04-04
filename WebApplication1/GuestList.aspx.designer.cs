@@ -42,6 +42,15 @@ namespace WebApplication1
         protected global::System.Web.UI.WebControls.Button RightArrowButton;
 
         /// <summary>
+        /// GuestObjectDataSource control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ObjectDataSource GuestObjectDataSource;
+
+        /// <summary>
         /// GuestGridView control.
         /// </summary>
         /// <remarks>
@@ -58,41 +67,5 @@ namespace WebApplication1
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label TotalGuestsLabel;
-
-        /// <summary>
-        /// FirstPageButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button FirstPageButton;
-
-        /// <summary>
-        /// PreviousPageButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button PreviousPageButton;
-
-        /// <summary>
-        /// NextPageButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button NextPageButton;
-
-        /// <summary>
-        /// LastPageButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button LastPageButton;
     }
 }

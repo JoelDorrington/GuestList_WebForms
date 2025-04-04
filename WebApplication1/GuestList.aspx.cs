@@ -17,9 +17,9 @@ namespace WebApplication1
     {
         private GuestRepository _guestRepository;
         private SessionService _sessionService;
-        protected GuestRepository.GetGuestsParams tableParams;
-        protected int totalGuests;
+        protected DateTime From { get; set; } = DateTime.Today;
         protected string paginationMessage;
+        protected SortDirection sortDirection = SortDirection.Ascending;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -33,116 +33,64 @@ namespace WebApplication1
             _guestRepository = new GuestRepository(new SQLConnectionFactory());
             if (!IsPostBack)
             {
-                tableParams = new GuestRepository.GetGuestsParams
+                if (string.IsNullOrEmpty(Request.QueryString["from"]))
                 {
-                    From = DateTime.Today,
-                    To = DateTime.Today.AddDays(1).AddTicks(-1)
-                };
-                CountGuests();
-                LoadGuests();
+                    string defaultFromDate = DateTime.Today.ToString("yyyy-MM-dd");
+                    Response.Redirect($"~/GuestList.aspx?from={defaultFromDate}");
+                    return;
+                }
             }
-            else
+            if (DateTime.TryParse(Request.QueryString["from"], out DateTime fromDate))
             {
-                tableParams = GuestRepository.GetGuestsParams.FromJson(
-                    _sessionService.Get("GuestListTableParams")
-                );
+                From = fromDate;
             }
-        }
-
-        private void LoadGuests()
-        {
-            totalGuests = int.Parse(_sessionService.Get("TotalGuests") ?? "0");
-            GuestGridView.VirtualItemCount = totalGuests;
-            GuestGridView.PageSize = tableParams.Limit;
-            GuestGridView.AllowPaging = true;
-            GuestGridView.AllowSorting = true;
-
-            var guests = _guestRepository.GetGuests(tableParams);
-            GuestGridView.DataSource = guests;
             GuestGridView.DataBind();
-            UpdatePaginationButtons();
+            paginationMessage = $"Showing Page: {GuestGridView.PageIndex+1} of {GuestGridView.PageCount}";
             DataBind();
-            _sessionService.Set("GuestListTableParams", tableParams.ToJson());
         }
-        private void CountGuests()
+        protected void GuestGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            totalGuests = _guestRepository.CountGuests(tableParams);
-            _sessionService.Set("TotalGuests", totalGuests.ToString());
+            GuestGridView.PageIndex = e.NewPageIndex;
+            GuestGridView.DataBind();
         }
 
         protected void GuestGridView_Sorting(object sender, GridViewSortEventArgs e)
         {
-            if (tableParams.OrderBy.ToString() == e.SortExpression)
+            SortDirection d = e.SortDirection;
+            string f = e.SortExpression;
+            GridViewSortDirection(GuestGridView, e, out sortDirection, out f);
+        }
+        private void GridViewSortDirection(GridView g, GridViewSortEventArgs e, out SortDirection d, out string f)
+        {
+            f = e.SortExpression;
+            d = e.SortDirection;
+
+            //Check if GridView control has required Attributes
+            if (g.Attributes["CurrentSortField"] != null && g.Attributes["CurrentSortDir"] != null)
             {
-                tableParams.Ascending = !tableParams.Ascending;
+                if (f == g.Attributes["CurrentSortField"])
+                {
+                    d = SortDirection.Descending;
+                    if (g.Attributes["CurrentSortDir"] == "ASC")
+                    {
+                        d = SortDirection.Ascending;
+                    }
+                }
+
+                g.Attributes["CurrentSortField"] = f;
+                g.Attributes["CurrentSortDir"] = (d == SortDirection.Ascending ? "DESC" : "ASC");
             }
-            else
-            {
-                tableParams.OrderBy = (GuestRepository.SortKeys)Enum.Parse(typeof(GuestRepository.SortKeys), e.SortExpression);
-                tableParams.Ascending = true;
-            }
-            tableParams.Offset = 0;
-            LoadGuests();
+
         }
 
         protected void LeftArrowButton_Click(object sender, EventArgs e)
         {
-            tableParams.From = tableParams.From?.AddDays(-1);
-            tableParams.To = tableParams.From?.AddDays(1).AddTicks(-1);
-            tableParams.Offset = 0;
-            CountGuests();
-            LoadGuests();
+            Response.Redirect($"~/GuestList.aspx?from={From.AddDays(-1).ToString("yyyy-MM-dd")}");
         }
 
         protected void RightArrowButton_Click(object sender, EventArgs e)
         {
-            tableParams.From = tableParams.From?.AddDays(1);
-            tableParams.To = tableParams.From?.AddDays(1).AddTicks(-1);
-            tableParams.Offset = 0;
-            CountGuests();
-            LoadGuests();
-        }
-        protected void FirstPageButton_Click(object sender, EventArgs e)
-        {
-            tableParams.Offset = 0;
-            LoadGuests();
-        }
-
-        protected void PreviousPageButton_Click(object sender, EventArgs e)
-        {
-            if (tableParams.Offset > 0)
-            {
-                tableParams.Offset -= tableParams.Limit;
-                if (tableParams.Offset < 0) tableParams.Offset = 0;
-                LoadGuests();
-            }
-        }
-
-        protected void NextPageButton_Click(object sender, EventArgs e)
-        {
-            tableParams.Offset += tableParams.Limit;
-            LoadGuests();
-        }
-
-        protected void LastPageButton_Click(object sender, EventArgs e)
-        {
-            int pageCount = (int)Math.Ceiling(GuestGridView.VirtualItemCount / (float)GuestGridView.PageSize);
-            tableParams.Offset = tableParams.Limit * (pageCount-1);
-            LoadGuests();
-        }
-
-        private void UpdatePaginationButtons()
-        {
-            int pageCount = (int)Math.Ceiling(GuestGridView.VirtualItemCount / (float)GuestGridView.PageSize);
-            int pageIndex = (int)Math.Ceiling(tableParams.Offset / (float)tableParams.Limit);
-            bool isFirstPage = pageIndex > 0;
-            bool isLastPage = pageIndex >= pageCount-1;
-
-            paginationMessage = $"Showing Guests: {tableParams.Offset+1} to {tableParams.Offset+tableParams.Limit} of {totalGuests}";
-            FirstPageButton.Enabled = isFirstPage;
-            PreviousPageButton.Enabled = isFirstPage;
-            NextPageButton.Enabled = !isLastPage;
-            LastPageButton.Enabled = !isLastPage;
+            Response.Redirect($"~/GuestList.aspx?from={From.AddDays(1).ToString("yyyy-MM-dd")}");
         }
     }
 

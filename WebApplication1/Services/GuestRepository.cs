@@ -17,6 +17,10 @@ namespace WebApplication1.Services
         {
             _sqlConnectionFactory = connectionFactory;
         }
+        public GuestRepository()
+        {
+            _sqlConnectionFactory = new SQLConnectionFactory();
+        }
 
         public void AddGuest(string name)
         {
@@ -103,7 +107,7 @@ namespace WebApplication1.Services
                     AddParameter(command, "@Offset", args.Offset);
                     AddParameter(command, "@Limit", args.Limit);
                     command.CommandText = query;
-
+                    LogCommand(command);
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -183,6 +187,55 @@ namespace WebApplication1.Services
             {
                 return JsonConvert.SerializeObject(this);
             }
+        }
+        public IEnumerable<Guest> Select_GuestList(DateTime from, string sortExpression)
+        {
+            return Select_GuestList(from, sortExpression, 0, 10);
+        }
+        public IEnumerable<Guest> Select_GuestList(DateTime from, string sortExpression, int startRowIndex = 0, int maximumRows = 10)
+        {
+            // Determine if sortExpression ends with " ASC" or " DESC"
+            bool ascending = true;
+            if (!string.IsNullOrEmpty(sortExpression))
+            {
+                if (sortExpression.EndsWith(" DESC", StringComparison.OrdinalIgnoreCase))
+                {
+                    ascending = false;
+                    sortExpression = sortExpression.Substring(0, sortExpression.Length - 5);
+                }
+                else if (sortExpression.EndsWith(" ASC", StringComparison.OrdinalIgnoreCase))
+                {
+                    ascending = true;
+                    sortExpression = sortExpression.Substring(0, sortExpression.Length - 4);
+                }
+            }
+
+            SortKeys orderBy;
+            if (!Enum.TryParse(sortExpression, true, out orderBy))
+            {
+                orderBy = SortKeys.Date;
+            }
+
+            var queryParams = new GetGuestsParams
+            {
+                Offset = startRowIndex,
+                Limit = maximumRows,
+                OrderBy = string.IsNullOrEmpty(sortExpression) ? SortKeys.Date : (SortKeys)Enum.Parse(typeof(SortKeys), sortExpression),
+                Ascending = ascending,
+                From = from,
+                To = from.AddDays(1).AddTicks(-1)
+            };
+            return GetGuests(queryParams);
+        }
+
+        public int SelectCount_GuestList(DateTime from)
+        {
+            var queryParams = new CountGuestsParams
+            {
+                From = from,
+                To = from.AddDays(1).AddTicks(-1)
+            };
+            return CountGuests(queryParams);
         }
     }
 }
