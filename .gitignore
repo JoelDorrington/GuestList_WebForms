@@ -1,0 +1,84 @@
+# Ignore Visual Studio temporary files, build results, and
+# user-specific files
+.vscode/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Ignore NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Ignore NPM packages
+node_modules/
+
+# Ignore Web specific files
+wwwroot/
+dist/
+node_modules/
+yarn.lock
+package-lock.json
+
+# Ignore Resharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Ignore JetBrains Rider files
+.idea/
+
+# Ignore StyleCop files
+StyleCopReport.xml
+
+# Ignore Coverlet coverage tool files
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Ignore local history
+.history/
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Ignore IDE specific files
+*.sln.ide
+*.sln.iml
+*.sln.idea
+
+# Ignore database files
+*.mdf
+*.ldf
+
+# Ignore publish output
+publish/
+
+# Ignore other files
+*.DS_Store
+*.vscode/
+WebApplication1/Web.config.secrets
