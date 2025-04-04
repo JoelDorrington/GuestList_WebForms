@@ -29,7 +29,6 @@ namespace WebApplication1.Services
         int CountGuests(GuestRepository.CountGuestsParams queryParams);
 
         IEnumerable<Guest> Select_GuestList(DateTime from, string sortExpression, int startRowIndex, int maximumRows);
-        IEnumerable<Guest> Select_GuestList(DateTime from, string sortExpression);
         int SelectCount_GuestList(DateTime from);
     }
 }

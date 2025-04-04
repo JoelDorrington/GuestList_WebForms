@@ -188,10 +188,6 @@ namespace WebApplication1.Services
                 return JsonConvert.SerializeObject(this);
             }
         }
-        public IEnumerable<Guest> Select_GuestList(DateTime from, string sortExpression)
-        {
-            return Select_GuestList(from, sortExpression, 0, 10);
-        }
         public IEnumerable<Guest> Select_GuestList(DateTime from, string sortExpression, int startRowIndex = 0, int maximumRows = 10)
         {
             // Determine if sortExpression ends with " ASC" or " DESC"

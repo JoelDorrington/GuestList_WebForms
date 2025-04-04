@@ -15,7 +15,6 @@ namespace WebApplication1
 {
     public partial class GuestList : Page
     {
-        private GuestRepository _guestRepository;
         private SessionService _sessionService;
         protected DateTime From { get; set; } = DateTime.Today;
         protected string paginationMessage;
@@ -30,15 +29,11 @@ namespace WebApplication1
                 return;
             }
 
-            _guestRepository = new GuestRepository(new SQLConnectionFactory());
-            if (!IsPostBack)
+            if (string.IsNullOrEmpty(Request.QueryString["from"]))
             {
-                if (string.IsNullOrEmpty(Request.QueryString["from"]))
-                {
-                    string defaultFromDate = DateTime.Today.ToString("yyyy-MM-dd");
-                    Response.Redirect($"~/GuestList.aspx?from={defaultFromDate}");
-                    return;
-                }
+                string defaultFromDate = DateTime.Today.ToString("yyyy-MM-dd");
+                Response.Redirect($"~/GuestList.aspx?from={defaultFromDate}");
+                return;
             }
             if (DateTime.TryParse(Request.QueryString["from"], out DateTime fromDate))
             {
