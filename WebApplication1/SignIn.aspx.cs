@@ -29,6 +29,7 @@ namespace WebApplication1
                 welcomePanel.Visible = HasName();
                 DataBind();
             }
+            nameTextBox.Focus();
         }
 
         private bool HasName()

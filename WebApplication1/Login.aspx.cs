@@ -24,6 +24,7 @@ namespace WebApplication1
                     Response.Redirect("~/GuestList");
                 }
             }
+            txtUsername.Focus();
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)

@@ -17,7 +17,13 @@ namespace WebApplication1
     {
         private SessionService _sessionService;
         protected DateTime From { get; set; } = DateTime.Today;
-        protected string paginationMessage;
+        protected string paginationMessage
+        {
+            get
+            {
+                return $"Showing Page: {GuestGridView.PageIndex + 1} of {GuestGridView.PageCount}";
+            }
+        }
         protected SortDirection sortDirection = SortDirection.Ascending;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -40,13 +46,13 @@ namespace WebApplication1
                 From = fromDate;
             }
             GuestGridView.DataBind();
-            paginationMessage = $"Showing Page: {GuestGridView.PageIndex+1} of {GuestGridView.PageCount}";
             DataBind();
         }
         protected void GuestGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             GuestGridView.PageIndex = e.NewPageIndex;
             GuestGridView.DataBind();
+            DataBind();
         }
 
         protected void GuestGridView_Sorting(object sender, GridViewSortEventArgs e)
